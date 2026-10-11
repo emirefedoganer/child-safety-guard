@@ -37,14 +37,29 @@ dotnet build
 dotnet test tests/ChildSafetyGuard.Core.Tests       # runs on Windows, macOS or Linux
 ```
 
-## Download a ready-made package
+## Quick start (from the release)
 
-Every push builds and tests the solution on a Windows runner (GitHub Actions) and produces a package with the service, the `csg`
-tool, the scripts and the docs (self-contained: no .NET install needed). Open **Actions → latest run → Artifacts →
-ChildSafetyGuard-win-x64**, unzip it on the Windows PC, and run `scripts\Install-Service.ps1` from an elevated PowerShell. Pushing a
-tag such as `v0.1.0` also attaches the zip to a GitHub Release.
+1. Download **`ChildSafetyGuard-win-x64.zip`** from the [latest release](../../releases/latest) and unzip it.
+2. Open **PowerShell as Administrator** in the unzipped folder and run:
 
-## Install (Windows 11, elevated PowerShell)
+```powershell
+Get-ChildItem -Recurse | Unblock-File                                       # remove the "downloaded from the internet" mark
+powershell -ExecutionPolicy Bypass -File .\scripts\Install-Service.ps1       # install the service (this run only)
+& "$env:ProgramFiles\ChildSafetyGuard\cli\csg.exe" setup                    # passphrase, recovery code, network baseline
+& "$env:ProgramFiles\ChildSafetyGuard\cli\csg.exe" policy enable            # start blocking
+```
+
+Notes:
+
+* Windows blocks `.ps1` scripts by default; `-ExecutionPolicy Bypass` lifts that for this one run only and changes no system setting.
+* The program files are **not code-signed**, so SmartScreen or Windows Security may warn. The package is built by the workflow in
+  `.github/workflows/build.yml` from the source in this repository.
+* `csg setup` prints a one-time **recovery code** - write it down and keep it somewhere safe. Run `csg policy list` before
+  `policy enable` to see what will be blocked (Discord and Telegram Desktop by default).
+* Try it in a Windows VM first: the Windows-specific parts have not yet been exercised on a real machine.
+* Every push also builds a package as a workflow artifact (Actions -> latest run -> Artifacts) if you want a newer build than the release.
+
+## Build and install from source (Windows 11/10, elevated PowerShell)
 
 ```powershell
 dotnet publish src/ChildSafetyGuard.Service -c Release -r win-x64 --self-contained false -o artifacts/service
