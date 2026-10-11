@@ -12,6 +12,28 @@ screens, passwords, keystrokes, websites), and sends nothing anywhere. See [docs
 > service host, CLI) on an actual Windows 11 machine. That code was only compiled (cross-compiled on macOS with
 > `-p:EnableWindowsTargeting=true`), so validate it on a Windows 11 VM before using it on a real device.
 
+## Quick start (from the release)
+
+1. Download **`ChildSafetyGuard-win-x64.zip`** from the [latest release](../../releases/latest) and unzip it.
+2. Open **PowerShell as Administrator** in the unzipped folder and run:
+
+```powershell
+Get-ChildItem -Recurse | Unblock-File                                       # remove the "downloaded from the internet" mark
+powershell -ExecutionPolicy Bypass -File .\scripts\Install-Service.ps1       # install the service (this run only)
+& "$env:ProgramFiles\ChildSafetyGuard\cli\csg.exe" setup                    # passphrase, recovery code, network baseline
+& "$env:ProgramFiles\ChildSafetyGuard\cli\csg.exe" policy enable            # start blocking
+```
+
+Notes:
+
+* Windows blocks `.ps1` scripts by default; `-ExecutionPolicy Bypass` lifts that for this one run only and changes no system setting.
+* The program files are **not code-signed**, so SmartScreen or Windows Security may warn. The package is built by the workflow in
+  `.github/workflows/build.yml` from the source in this repository.
+* `csg setup` prints a one-time **recovery code** - write it down and keep it somewhere safe. Run `csg policy list` before
+  `policy enable` to see what will be blocked (Discord and Telegram Desktop by default).
+* Try it in a Windows VM first: the Windows-specific parts have not yet been exercised on a real machine.
+* Every push also builds a package as a workflow artifact (Actions -> latest run -> Artifacts) if you want a newer build than the release.
+
 ## How it works (one paragraph)
 
 The guardian runs `csg setup` (elevated) to choose a passphrase, receive a one-time recovery code and record a network baseline.
@@ -36,28 +58,6 @@ stopped service.
 dotnet build
 dotnet test tests/ChildSafetyGuard.Core.Tests       # runs on Windows, macOS or Linux
 ```
-
-## Quick start (from the release)
-
-1. Download **`ChildSafetyGuard-win-x64.zip`** from the [latest release](../../releases/latest) and unzip it.
-2. Open **PowerShell as Administrator** in the unzipped folder and run:
-
-```powershell
-Get-ChildItem -Recurse | Unblock-File                                       # remove the "downloaded from the internet" mark
-powershell -ExecutionPolicy Bypass -File .\scripts\Install-Service.ps1       # install the service (this run only)
-& "$env:ProgramFiles\ChildSafetyGuard\cli\csg.exe" setup                    # passphrase, recovery code, network baseline
-& "$env:ProgramFiles\ChildSafetyGuard\cli\csg.exe" policy enable            # start blocking
-```
-
-Notes:
-
-* Windows blocks `.ps1` scripts by default; `-ExecutionPolicy Bypass` lifts that for this one run only and changes no system setting.
-* The program files are **not code-signed**, so SmartScreen or Windows Security may warn. The package is built by the workflow in
-  `.github/workflows/build.yml` from the source in this repository.
-* `csg setup` prints a one-time **recovery code** - write it down and keep it somewhere safe. Run `csg policy list` before
-  `policy enable` to see what will be blocked (Discord and Telegram Desktop by default).
-* Try it in a Windows VM first: the Windows-specific parts have not yet been exercised on a real machine.
-* Every push also builds a package as a workflow artifact (Actions -> latest run -> Artifacts) if you want a newer build than the release.
 
 ## Build and install from source (Windows 11/10, elevated PowerShell)
 
