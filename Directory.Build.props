@@ -1,0 +1,10 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+    <Authors>Child Safety Guard contributors</Authors>
+    <Product>Child Safety Guard</Product>
+  </PropertyGroup>
+</Project>

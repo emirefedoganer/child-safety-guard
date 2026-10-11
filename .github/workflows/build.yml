@@ -1,0 +1,53 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    permissions:
+      contents: write # only used to attach the package to a release when a v* tag is pushed
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Build
+        run: dotnet build ChildSafetyGuard.sln -c Release
+
+      - name: Test
+        run: dotnet test tests/ChildSafetyGuard.Core.Tests -c Release --no-build
+
+      - name: Publish service and CLI (self-contained, win-x64)
+        shell: pwsh
+        run: |
+          dotnet publish src/ChildSafetyGuard.Service -c Release -r win-x64 --self-contained true -o package/artifacts/service
+          dotnet publish src/ChildSafetyGuard.Cli -c Release -r win-x64 --self-contained true -o package/artifacts/cli
+          Copy-Item scripts package/scripts -Recurse
+          Copy-Item docs package/docs -Recurse
+          Copy-Item README.md package/
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: ChildSafetyGuard-win-x64
+          path: package
+
+      - name: Attach package to the release (tags only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          Compress-Archive -Path package/* -DestinationPath ChildSafetyGuard-win-x64.zip
+          gh release create "$env:GITHUB_REF_NAME" ChildSafetyGuard-win-x64.zip --title "$env:GITHUB_REF_NAME" --generate-notes
