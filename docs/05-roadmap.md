@@ -6,7 +6,7 @@ Threat model, architecture, API comparison, repository layout, transparency stat
 ## Phase 1 — MVP (this repository)
 * Baseline network inspection (adapters, DNS, gateways, proxy settings) and explainable change analysis.
 * Guardian authentication: passphrase, lockout, one-time recovery code, session tokens.
-* Policy management: validated, guardian-only changes; Discord listed by default; per-profile targeting.
+* Policy management: validated, guardian-only changes; Discord and Telegram listed by default; per-profile targeting.
 * Windows Firewall integration: idempotent reconcile of outbound block rules, drift repair, protected-path guard.
 * Startup enforcement: Windows service, auto-start, restart-on-failure, reapply at boot and on network change.
 * Circumvention *reporting*: known tool names, services, drivers (WinDivert), watch list.

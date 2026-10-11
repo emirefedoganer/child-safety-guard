@@ -23,7 +23,7 @@ public sealed record PolicyDocument
     /// <summary>Plain-language message shown to the device user when a blocked application is opened.</summary>
     public BlockNotice Notice { get; init; } = BlockNotice.Default;
 
-    /// <summary>A fresh policy: Discord is listed, but enforcement stays off until the guardian enables it.</summary>
+    /// <summary>A fresh policy: Discord and Telegram are listed, but enforcement stays off until the guardian enables it.</summary>
     public static PolicyDocument CreateDefault() => new()
     {
         EnforcementEnabled = false,
@@ -67,6 +67,17 @@ public static class DefaultApplications
                 @"%LOCALAPPDATA%\DiscordPTB\Update.exe",
                 @"%LOCALAPPDATA%\DiscordCanary\app-*\DiscordCanary.exe",
                 @"%LOCALAPPDATA%\DiscordCanary\Update.exe",
+            }),
+        new BlockedApplication(
+            "telegram",
+            "Telegram (desktop app)",
+            new[]
+            {
+                // Default per-user install from telegram.org, plus the older %LOCALAPPDATA% location.
+                @"%APPDATA%\Telegram Desktop\Telegram.exe",
+                @"%APPDATA%\Telegram Desktop\Updater.exe",
+                @"%LOCALAPPDATA%\Telegram Desktop\Telegram.exe",
+                @"%LOCALAPPDATA%\Telegram Desktop\Updater.exe",
             }),
     };
 }

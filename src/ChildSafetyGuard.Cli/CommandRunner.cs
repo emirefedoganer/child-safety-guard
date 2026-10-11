@@ -146,7 +146,7 @@ internal sealed class CommandRunner
         ConsoleIO.Info("    " + recoveryCode);
         ConsoleIO.Info(string.Empty);
         ConsoleIO.Info("Next steps:");
-        ConsoleIO.Info("  1. 'csg policy list'      review what will be blocked (Discord is listed; nothing is enforced yet)");
+        ConsoleIO.Info("  1. 'csg policy list'      review what will be blocked (Discord and Telegram are listed; nothing is enforced yet)");
         ConsoleIO.Info("  2. 'csg profiles'         see Windows profiles; 'csg policy target-profiles <name>' limits blocking to one");
         ConsoleIO.Info("  3. 'csg policy enable'    turn enforcement on");
         return 0;

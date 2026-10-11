@@ -14,6 +14,9 @@ public class PathPatternExpanderTests
         @"C:\Users\kid\AppData\Local\Discord\app-1.0.9002\notes.txt",
         @"C:\Users\parent\AppData\Local\Discord\app-1.0.1\Discord.exe",
         @"C:\Program Files\Other\other.exe",
+        @"C:\Users\kid\AppData\Roaming\Telegram Desktop\Telegram.exe",
+        @"C:\Users\kid\AppData\Roaming\Telegram Desktop\Updater.exe",
+        @"C:\Users\kid\AppData\Roaming\Telegram Desktop\tdata\settings0",
     });
 
     private static readonly UserProfile Kid = new("kid", @"C:\Users\kid");
@@ -31,6 +34,17 @@ public class PathPatternExpanderTests
         Assert.All(paths, p => Assert.StartsWith(@"C:\Users\kid\", p));
         Assert.Contains(@"C:\Users\kid\AppData\Local\Discord\app-1.0.9002\Discord.exe", paths);
         Assert.Contains(@"C:\Users\kid\AppData\Local\Discord\Update.exe", paths);
+    }
+
+    [Fact]
+    public void DefaultList_AlsoCoversTelegramDesktop()
+    {
+        var telegram = DefaultApplications.All.Single(a => a.Id == "telegram");
+
+        var paths = Expand(telegram.PathPatterns, Kid);
+
+        Assert.Equal(2, paths.Count); // app + updater; the tdata folder is never touched
+        Assert.All(paths, p => Assert.Contains(@"\Telegram Desktop\", p));
     }
 
     [Fact]

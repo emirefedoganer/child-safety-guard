@@ -1,13 +1,13 @@
 # Child Safety Guard
 
 A **transparent, guardian-managed** Windows 11 parental-control service written in C# / .NET 8. A parent or legal guardian uses it to
-keep chosen applications (Discord is listed by default) from reaching the network on a child's account, and to be told — with an
+keep chosen applications (Discord and Telegram are listed by default) from reaching the network on a child's account, and to be told — with an
 explanation — when the device's network setup changes or a well-known VPN / DPI-circumvention tool (GoodbyeDPI, WinDivert, …) shows up.
 
 It is **not** spyware: it is visible in Services and Task Manager, does not hide or disguise itself, reads no content (no messages,
 screens, passwords, keystrokes, websites), and sends nothing anywhere. See [docs/PRIVACY.md](docs/PRIVACY.md).
 
-> **Status: MVP.** The whole solution builds with 0 errors and 0 warnings on .NET 8, and the 118 unit tests of
+> **Status: MVP.** The whole solution builds with 0 errors and 0 warnings on .NET 8, and the 119 unit tests of
 > `ChildSafetyGuard.Core` pass. What has **not** been done yet: running the Windows layer (Windows Firewall COM calls, DPAPI store,
 > service host, CLI) on an actual Windows 11 machine. That code was only compiled (cross-compiled on macOS with
 > `-p:EnableWindowsTargeting=true`), so validate it on a Windows 11 VM before using it on a real device.
